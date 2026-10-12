@@ -1,28 +1,48 @@
-{
-  "id": "/Leano_Complex_Calculator/",
-  "name": "Leano Complex Elec Calculator",
-  "short_name": "Leano Elec",
-  "description": "A private prepaid electricity unit calculator for Ekurhuleni Domestic B tariff estimates, including VAT, vend fee, channel fee, discount and monthly service charge.",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#151922",
-  "theme_color": "#151922",
-  "lang": "en-ZA",
-  "categories": ["utilities", "finance", "productivity"],
-  "icons": [
-    {
-      "src": "./icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
-}
+/* Leano Complex Elec Calculator — service worker
+   Caches the app shell so it works offline. */
+
+const CACHE_NAME = "leano-v1";
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./manifest.webmanifest",
+  "./icon-192.png",
+  "./icon-512.png"
+];
+
+/* Install: pre-cache the app shell */
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+  );
+  self.skipWaiting();
+});
+
+/* Activate: clean up old caches */
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
+      )
+    )
+  );
+  self.clients.claim();
+});
+
+/* Fetch: serve from cache, fall back to network */
+self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      return (
+        cached ||
+        fetch(event.request).then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          return response;
+        })
+      );
+    })
+  );
+});
