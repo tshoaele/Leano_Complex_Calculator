@@ -154,11 +154,23 @@
   input[type="number"]::placeholder { color: var(--muted2); }
   input[type="number"]:focus { border-color: rgba(0,229,160,0.72); box-shadow: 0 0 0 4px rgba(0,229,160,0.1), 0 0 22px rgba(0,229,160,0.08); }
 
+  /* Locked (read-only) fields */
+  input[type="number"][readonly] {
+    cursor: not-allowed;
+    opacity: 0.75;
+    background: rgba(127,139,159,0.12);
+    border-style: dashed;
+  }
+  input[type="number"][readonly]:focus {
+    border-color: var(--border);
+    box-shadow: none;
+  }
+
   .divider { height: 1px; margin: 22px 0; position: relative; background: var(--border-soft); }
   .divider span { position: absolute; top: 50%; left: 50%; padding: 0 12px; transform: translate(-50%, -50%); background: var(--panel-solid); color: var(--muted); font-size: 10px; font-family: var(--mono); letter-spacing: 1.2px; }
 
   .empty-state { padding: 22px; border-radius: 15px; border: 1px dashed rgba(127,139,159,0.35); color: var(--muted); background: rgba(127,139,159,0.08); text-align: center; font-family: var(--mono); font-size: 13px; }
-  .error-state { padding: 22px; border-radius: 15px; border: 1px dashed rgba(255,107,107,0.45); color: var(--danger); background: rgba(255,107,107,0.08); text-align: center; font-family: var(--mono); font-size: 13px; }
+  .error-state { padding: 22px; border-radius: 15px; border: 1px dashed rgba(255,107,107,0.45); color: var(--danger); background: rgba(255,107,107,0.08); text-align: center; font-family: var(--mono); font-size: 13px; line-height: 1.5; }
   .tariff-note { margin-bottom: 14px; padding: 11px 13px; border-radius: 12px; color: var(--text); background: rgba(0,229,160,0.075); border: 1px solid rgba(0,229,160,0.18); font-family: var(--mono); font-size: 11px; text-align: center; }
   .result-box { overflow: hidden; border-radius: 18px; border: 1px solid rgba(127,139,159,0.18); background: linear-gradient(180deg, rgba(0,229,160,0.08), rgba(0,183,255,0.045)), rgba(127,139,159,0.08); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 40px rgba(0,0,0,0.12); }
   .result-main { padding: 20px; display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; border-bottom: 1px solid var(--border-soft); }
@@ -184,6 +196,16 @@
   .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .settings-grid .field { margin-bottom: 0; }
   .settings-grid input[type="number"] { height: 43px; font-size: 14px; }
+
+  .locked-note {
+    grid-column: 1 / -1;
+    margin-top: 2px;
+    font-size: 10px;
+    font-family: var(--mono);
+    color: var(--muted2);
+    letter-spacing: 0.3px;
+    text-align: center;
+  }
 
   /* MSC block */
   .msc-block {
@@ -332,33 +354,34 @@
         </div>
         <div class="msc-input input-wrap">
           <span class="prefix" aria-hidden="true">R</span>
-          <input type="number" id="msc-amount" inputmode="decimal" min="0" max="10000" value="79.41" step="0.01" autocomplete="off" placeholder="79.41" />
+          <input type="number" id="msc-amount" inputmode="decimal" min="0" max="10000" value="79.41" step="0.01" autocomplete="off" placeholder="79.41" readonly />
         </div>
         <div class="msc-note" id="mscNote">excl. VAT &middot; not included in calculation</div>
       </div>
 
       <div class="settings-toggle">
-        <button id="settingsToggle" type="button" aria-expanded="false" aria-controls="settings">&#x2699; adjust rates</button>
+        <button id="settingsToggle" type="button" aria-expanded="false" aria-controls="settings">&#x2699; view rates</button>
       </div>
 
       <div class="settings-panel" id="settings">
         <div class="settings-grid">
           <div class="field">
             <label for="rate">Rate excl. VAT</label>
-            <div class="input-wrap"><span class="prefix" aria-hidden="true">R</span><input type="number" id="rate" inputmode="decimal" min="0.0001" max="1000" value="3.6760" step="0.0001" autocomplete="off" /></div>
+            <div class="input-wrap"><span class="prefix" aria-hidden="true">R</span><input type="number" id="rate" inputmode="decimal" min="0.0001" max="1000" value="3.6760" step="0.0001" autocomplete="off" readonly /></div>
           </div>
           <div class="field">
             <label for="vend-fee">Vend Fee</label>
-            <div class="input-wrap"><span class="prefix" aria-hidden="true">R</span><input type="number" id="vend-fee" inputmode="decimal" min="0" max="10000" value="23.91" step="0.01" autocomplete="off" /></div>
+            <div class="input-wrap"><span class="prefix" aria-hidden="true">R</span><input type="number" id="vend-fee" inputmode="decimal" min="0" max="10000" value="23.91" step="0.01" autocomplete="off" readonly /></div>
           </div>
           <div class="field">
             <label for="channel-fee">Channel Fee</label>
-            <div class="input-wrap"><span class="prefix" aria-hidden="true">R</span><input type="number" id="channel-fee" inputmode="decimal" min="0" max="10000" value="27.97" step="0.01" autocomplete="off" /></div>
+            <div class="input-wrap"><span class="prefix" aria-hidden="true">R</span><input type="number" id="channel-fee" inputmode="decimal" min="0" max="10000" value="27.97" step="0.01" autocomplete="off" readonly /></div>
           </div>
           <div class="field">
             <label for="discount">Discount</label>
-            <div class="input-wrap"><span class="prefix" aria-hidden="true">R</span><input type="number" id="discount" inputmode="decimal" min="0" max="10000" value="27.97" step="0.01" autocomplete="off" /></div>
+            <div class="input-wrap"><span class="prefix" aria-hidden="true">R</span><input type="number" id="discount" inputmode="decimal" min="0" max="10000" value="27.97" step="0.01" autocomplete="off" readonly /></div>
           </div>
+          <div class="locked-note">&#x1F512; Fixed rates &middot; not editable</div>
         </div>
       </div>
     </section>
@@ -453,11 +476,12 @@
     try {
       const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.settings) || '{}');
       if (stored && typeof stored === 'object') {
-        elements.rate.value = safeNumber(stored.rate, DEFAULTS.rate, 0.0001, 1000).toString();
-        elements.vendFee.value = safeNumber(stored.vendFee, DEFAULTS.vendFee, 0, 10000).toString();
-        elements.channelFee.value = safeNumber(stored.channelFee, DEFAULTS.channelFee, 0, 10000).toString();
-        elements.discount.value = safeNumber(stored.discount, DEFAULTS.discount, 0, 10000).toString();
-        elements.mscAmount.value = safeNumber(stored.mscAmount, DEFAULTS.mscAmount, 0, 10000).toString();
+        // Rates are fixed — always restore defaults. Only the MSC toggle is user-controlled.
+        elements.rate.value = DEFAULTS.rate.toString();
+        elements.vendFee.value = DEFAULTS.vendFee.toString();
+        elements.channelFee.value = DEFAULTS.channelFee.toString();
+        elements.discount.value = DEFAULTS.discount.toString();
+        elements.mscAmount.value = DEFAULTS.mscAmount.toString();
         if (stored.mscOn) setMsc(true);
       }
     } catch (_) {}
@@ -556,7 +580,13 @@
       totalIncl = amount;
       const totalExcl = totalIncl / (1 + settings.vat);
       electricityExcl = totalExcl - netFeeExcl;
-      if (electricityExcl <= 0) { showMessage('error-state', 'Amount too low to cover fixed fees.'); return; }
+      if (electricityExcl <= 0) {
+        const minTotalIncl = netFeeExcl * (1 + settings.vat);
+        showMessage('error-state',
+          'R' + money(amount) + ' is too low — fixed fees need about R' + money(minTotalIncl) +
+          ' (VAT incl.) before any units are bought. Enter a higher amount.');
+        return;
+      }
       unitsValue = electricityExcl / settings.rate;
     } else {
       unitsValue = safeNumber(elements.unitsInput.value, 0, 0, 1000000);
@@ -602,7 +632,7 @@
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setMsc(!mscOn); }
     });
 
-    [elements.randsInput, elements.unitsInput, elements.rate, elements.vendFee, elements.channelFee, elements.discount, elements.mscAmount].forEach((input) => {
+    [elements.randsInput, elements.unitsInput].forEach((input) => {
       input.addEventListener('input', calc);
       input.addEventListener('change', calc);
     });
